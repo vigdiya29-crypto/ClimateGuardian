@@ -1,0 +1,349 @@
+/* ===========================
+   HOW IT WORKS SECTION
+=========================== */
+
+.how-section{
+    width:100%;
+    padding:70px 8% 60px;
+    position:relative;
+    overflow:hidden;
+
+}
+
+/* ===========================
+   TITLE
+=========================== */
+
+.how-title{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.how-title span{
+    color:#27E8D7;
+    letter-spacing:3px;
+    font-size:12.5px;
+    font-weight:600;
+}
+
+.how-title h2{
+    margin-top:12px;
+    font-size:38px;
+    line-height:1.2;
+    color:#fff;
+}
+
+.how-title strong{
+    color:#27E8D7;
+}
+
+/* ===========================
+   TIMELINE
+=========================== */
+.timeline{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:flex-start;
+
+gap:20px;
+
+position:relative;
+
+}
+
+/* Timeline line */
+
+.timeline-line{
+    position:absolute;
+    top:22px;
+    left:8%;
+    right:8%;
+    height:3px;
+
+    border-radius:50px;
+
+    background:linear-gradient(
+        90deg,
+        rgba(39,232,215,.1),
+        rgba(39,232,215,.55),
+        rgba(39,232,215,.1)
+    );
+}
+
+.timeline-line::after{
+    content:"";
+    position:absolute;
+    left:0;
+    top:50%;
+
+    width:16px;
+    height:16px;
+
+    transform:translateY(-50%);
+    border-radius:50%;
+
+    background:#27E8D7;
+
+    box-shadow:
+        0 0 12px #27E8D7,
+        0 0 25px #27E8D7,
+        0 0 45px rgba(39,232,215,.8);
+
+    animation:moveDot 4s ease-in-out infinite;
+}
+@keyframes moveDot{
+
+    0%{
+        left:0%;
+    }
+
+    25%{
+        left:25%;
+    }
+
+    50%{
+        left:50%;
+    }
+
+    75%{
+        left:75%;
+    }
+
+    100%{
+        left:100%;
+    }
+
+}
+
+@keyframes drawLine{
+    to{
+        transform:scaleX(1);
+    }
+}
+
+/* ===========================
+   STEP
+=========================== */
+
+.timeline-step{
+     flex:1;
+    max-width:270px;
+    min-width:220px;
+    position:relative;
+    padding-top:55px;
+    text-align:center;
+}
+/* Circle */
+
+.circle{
+    position:absolute;
+    top:-18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:linear-gradient(
+        135deg,
+        rgba(39,232,215,.22),
+        rgba(21,199,255,.18)
+    );
+
+    box-shadow:0 0 25px rgba(39,232,215,.35);
+    z-index:5;
+    transition:.4s;
+}
+.circle svg{
+    width:24px;
+    height:24px;
+    color:#7CF7E8;
+    transition:0.35s ease;
+}
+.timeline-step:hover .circle{
+    transform:translateX(-50%) scale(1.1);
+}
+
+.timeline-step:hover .circle svg{
+    color:#ffffff;
+}
+@keyframes pulseIcon{
+
+    0%{
+        transform:translateX(-50%) scale(1);
+    }
+
+    50%{
+        transform:translateX(-50%) scale(1.08);
+    }
+
+    100%{
+        transform:translateX(-50%) scale(1);
+    }
+
+}
+/* Number */
+
+.step-number{
+    display:block;
+    margin-top:0;
+    margin-bottom:10px;
+
+    letter-spacing:2.5px;
+    font-size:11px;
+    font-weight:700;
+    color:#27E8D7;
+}
+
+/* ===========================
+   CARD
+=========================== */
+
+.step-card{
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: rgba(18,26,36,.72);
+
+    backdrop-filter: blur(20px);
+
+    border:1px solid rgba(39,232,215,.12);
+
+    border-radius:18px;
+
+    padding:20px 18px;
+
+    min-height:145px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    transition:.45s;
+
+}
+
+/* Shine */
+
+.step-card::before{
+    content:"";
+    position:absolute;
+
+    top:0;
+    left:-120%;
+
+    width:80%;
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.08),
+        transparent
+    );
+
+    transition:.8s;
+}
+
+/* Hover */
+
+.timeline-step:hover .step-card{
+   transform:scale(1.02);
+
+    background:rgba(24,35,48,.82);
+
+    border-color:#27E8D7;
+
+    box-shadow:
+        0 16px 35px rgba(0,0,0,.35),
+        0 0 25px rgba(39,232,215,.15);
+}
+
+.timeline-step:hover .step-card::before{
+    left:130%;
+}
+
+.timeline-step:hover .circle{
+    transform:translateX(-50%) scale(1.1) rotate(-8deg);
+}
+
+/* Text */
+
+.step-card h3{
+    color:#fff;
+    font-size:18px;
+    margin-bottom:8px;
+}
+
+.step-card p{
+    max-width:220px;
+    margin:auto;
+
+    font-size:13.5px;
+    line-height:1.6;
+    color:#B8C7D2;
+}
+
+/* ===========================
+   BACKGROUND GLOW
+=========================== */
+
+.how-section::before{
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+    top:55%;
+
+    transform:translateX(-50%);
+
+    width:1100px;
+    height:650px;
+
+    background:radial-gradient(
+        ellipse,
+        rgba(39,232,215,.06),
+        transparent 70%
+    );
+
+    filter:blur(120px);
+
+    pointer-events:none;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width:1100px){
+
+    .timeline{
+        flex-direction:column;
+        align-items:center;
+    }
+
+    .timeline-line{
+        display:none;
+    }
+
+    .timeline-step{
+        width:100%;
+        max-width:500px;
+    }
+
+    .how-title h2{
+        font-size:42px;
+    }
+
+}

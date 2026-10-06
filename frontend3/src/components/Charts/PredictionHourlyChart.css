@@ -1,0 +1,46 @@
+.hourly-chart__title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hourly-chart__badge {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--sky);
+  background: rgba(0, 188, 212, 0.1);
+  border: 1px solid rgba(0, 188, 212, 0.25);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.hourly-chart__target-ring {
+  fill: none;
+  stroke: #FFC107;
+  stroke-width: 2;
+  stroke-dasharray: 2 2;
+  opacity: 0.9;
+  animation: target-ring-spin 12s linear infinite;
+}
+
+@keyframes target-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.chart-card__x-label.is-target {
+  fill: #FFC107;
+  font-weight: 700;
+}
+
+.hourly-tooltip__target-tag {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #FFC107;
+  background: rgba(255, 193, 7, 0.15);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+}

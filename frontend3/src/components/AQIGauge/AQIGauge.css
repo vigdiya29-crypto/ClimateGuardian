@@ -1,0 +1,69 @@
+.aqi-gauge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.aqi-gauge__halo {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--gauge-color) 30%, transparent) 0%, transparent 70%);
+  animation: gauge-breathe var(--pulse-speed, 2.2s) ease-in-out infinite;
+}
+
+@keyframes gauge-breathe {
+  0%, 100% { transform: scale(0.86); opacity: 0.55; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+.aqi-gauge__svg {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.aqi-gauge__track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.aqi-gauge__fill {
+  fill: none;
+  stroke: var(--gauge-color, var(--fresh-green));
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dasharray var(--dur-slow) var(--ease-out), stroke var(--dur-med) var(--ease-out);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--gauge-color) 45%, transparent));
+}
+
+.aqi-gauge__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.aqi-gauge__value {
+  font-family: var(--font-mono);
+  font-size: 40px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.aqi-gauge__label {
+  margin-top: 4px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}

@@ -1,0 +1,139 @@
+.cta-section{
+   padding:70px 0 60px;
+    position:relative;
+    overflow:hidden;
+}
+
+.cta-glow{
+    position:absolute;
+    width:700px;
+    height:700px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle,
+    rgba(39,232,215,.14),
+    transparent 70%);
+    filter:blur(70px);
+}
+
+.cta-box{
+    position:relative;
+    z-index:2;
+
+    width:min(800px,90%);
+    margin:auto;
+
+    padding:48px 36px;
+
+    border-radius:28px;
+
+    background:
+    linear-gradient(180deg,
+    rgba(18,27,39,.96),
+    rgba(12,18,28,.95));
+
+    border:1px solid rgba(39,232,215,.12);
+
+    text-align:center;
+    overflow: hidden;
+    box-shadow:
+0 25px 60px rgba(0,0,0,.35),
+0 0 30px rgba(39,232,215,.06);
+}
+.cta-tag{
+    display:inline-block;
+
+    padding:5px 14px;
+
+    border-radius:40px;
+
+    border:1px solid rgba(39,232,215,.25);
+
+    color:#27E8D7;
+
+    letter-spacing:1.5px;
+
+    font-size:11px;
+}
+
+.cta-box h2{
+    margin-top:18px;
+    font-size:38px;
+    font-weight:700;
+    color:white;
+    line-height:1.15;
+    letter-spacing:-0.5px;
+}
+
+.cta-box h2 span{
+    color:#27E8D7;
+}
+
+.cta-box p{
+    width:560px;
+    max-width:100%;
+    margin:14px auto 0;
+
+    color:#8ea2b3;
+
+    font-size:15px;
+    line-height:1.65;
+}
+
+.cta-buttons{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-top:32px;
+}
+
+.primary-btn{
+    padding:12px 24px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:#27E8D7;
+
+    color:#071218;
+
+    font-size:14.5px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.35s;
+}
+
+.primary-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 30px rgba(39,232,215,.35);
+}
+
+.secondary-btn{
+    padding:12px 24px;
+
+    border-radius:50px;
+
+    background:transparent;
+
+    border:1px solid rgba(39,232,215,.3);
+
+    color:white;
+
+    font-size:14.5px;
+
+    cursor:pointer;
+
+    transition:.35s;
+}
+
+.secondary-btn:hover{
+    border-color:#27E8D7;
+    color:#27E8D7;
+      background:rgba(39,232,215,.06);
+}

@@ -1,0 +1,597 @@
+.carbon__header-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--fresh-green);
+  background: rgba(var(--fresh-green-rgb), 0.08);
+  border: 1px solid rgba(var(--fresh-green-rgb), 0.22);
+  padding: 2px 9px;
+  border-radius: var(--radius-full);
+}
+
+.carbon__header-tag .live-dot {
+  width: 6px;
+  height: 6px;
+  background: #57d97a;
+  border-radius: 50%;
+}
+
+/* 2-Column Grid Layout */
+.carbon__grid-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* Left Column: Form Column (Sticky on Desktop) */
+.carbon__inputs-column {
+  position: sticky;
+  top: 84px;
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+  padding-bottom: var(--space-2);
+}
+
+.carbon__inputs-column::-webkit-scrollbar {
+  width: 5px;
+}
+
+.carbon__inputs-column::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+}
+
+/* Left Column: Form Card */
+.carbon__form-card {
+  padding: var(--space-5);
+  background: var(--surface);
+  position: relative;
+  z-index: 20;
+}
+
+.carbon__form-header {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.carbon__form-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2px 0 0;
+}
+
+.carbon__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Input Section Box */
+.carbon__section-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.carbon__section-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.carbon__section-icon {
+  color: var(--fresh-green);
+}
+
+.carbon__fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.carbon__field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.carbon__field--full {
+  grid-column: 1 / -1;
+}
+
+.carbon__field-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.carbon__field label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.carbon__field-unit {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* Mode toggle for Electricity (kWh vs Bill) */
+.carbon__mode-toggle {
+  display: inline-flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 1px;
+}
+
+.carbon__mode-btn {
+  border: none;
+  background: transparent;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.carbon__mode-btn.is-active {
+  background: rgba(var(--fresh-green-rgb), 0.2);
+  color: #57d97a;
+}
+
+.carbon__input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.carbon__input-with-icon input {
+  width: 100%;
+  padding-right: 65px;
+}
+
+.carbon__input-unit {
+  position: absolute;
+  right: 12px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.carbon__field input {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  background: var(--bg);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.carbon__field input:focus-visible {
+  border-color: var(--fresh-green);
+  box-shadow: 0 0 0 2px rgba(var(--fresh-green-rgb), 0.25);
+}
+
+/* Toggle Pills for Waste Recycling */
+.carbon__toggle-pills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.carbon__pill-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.carbon__pill-btn.is-active {
+  background: rgba(var(--fresh-green-rgb), 0.16);
+  border-color: var(--fresh-green);
+  color: #57d97a;
+}
+
+.carbon__submit-action {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  margin-top: var(--space-2);
+  box-shadow: 0 6px 20px -6px rgba(var(--fresh-green-rgb), 0.6);
+}
+
+/* Right Column: Calculated Results */
+.carbon__results-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  animation: carbon-results-in 260ms var(--ease-out);
+}
+
+@keyframes carbon-results-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Primary KPI Hero Card */
+.carbon__kpi-hero {
+  padding: var(--space-5);
+  background: var(--surface);
+}
+
+.carbon__kpi-hero-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.carbon__kpi-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.carbon__kpi-hero-val-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+.carbon__kpi-hero-number {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.carbon__kpi-hero-units {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.carbon__kpi-hero-unit-main {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.carbon__kpi-hero-annual {
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.carbon__kpi-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.carbon__kpi-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.carbon__kpi-meta-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.carbon__kpi-meta-item strong {
+  color: var(--text-primary);
+}
+
+/* Compact Insights */
+.carbon__card-compact {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  min-height: 130px;
+}
+
+.carbon__card-compact-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.carbon__accent-icon {
+  color: var(--sky);
+}
+
+.carbon__card-compact-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
+.carbon__card-compact-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.carbon__card-compact-desc strong {
+  color: var(--text-primary);
+}
+
+/* Emission Breakdown Card */
+.carbon__breakdown-card {
+  padding: var(--space-5);
+  background: var(--surface);
+}
+
+.carbon__breakdown-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.carbon__breakdown-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2px 0 0;
+}
+
+.carbon__breakdown-tag {
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.carbon__breakdown-bar {
+  display: flex;
+  height: 10px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  background: var(--border-strong);
+  margin-bottom: var(--space-4);
+  gap: 2px;
+}
+
+.carbon__breakdown-segment {
+  height: 100%;
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+.carbon__breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.carbon__breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.carbon__breakdown-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.carbon__breakdown-text {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+}
+
+.carbon__breakdown-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.carbon__breakdown-amount {
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+/* Recommendations Card */
+.carbon__recommendations-card {
+  padding: var(--space-5);
+  background: var(--surface);
+}
+
+.carbon__recommendations-head {
+  margin-bottom: var(--space-3);
+}
+
+.carbon__recommendations-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2px 0 0;
+}
+
+.carbon__recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.carbon__rec-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.carbon__rec-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.carbon__rec-bullet {
+  color: var(--fresh-green);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.carbon__rec-title {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.carbon__rec-desc {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.carbon__rec-saving {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #57d97a;
+  white-space: nowrap;
+  background: rgba(46, 125, 50, 0.12);
+  border: 1px solid rgba(46, 125, 50, 0.25);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* Empty Placeholder */
+.carbon__empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  padding: var(--space-8) var(--space-5);
+}
+
+.carbon__empty-card h4 {
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.carbon__empty-card p {
+  font-size: 13px;
+  max-width: 320px;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .carbon__grid-layout {
+    grid-template-columns: 1fr;
+  }
+  .carbon__inputs-column {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 600px) {
+  .carbon__fields-grid {
+    grid-template-columns: 1fr;
+  }
+  .carbon__breakdown-grid {
+    grid-template-columns: 1fr;
+  }
+  .carbon__rec-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .carbon__kpi-hero-layout {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .carbon__kpi-hero-right {
+    align-items: flex-start;
+  }
+  .carbon__kpi-meta-list {
+    text-align: left;
+  }
+  .carbon__kpi-meta-item {
+    justify-content: flex-start;
+  }
+}

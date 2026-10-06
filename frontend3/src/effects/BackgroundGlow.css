@@ -1,0 +1,124 @@
+.background-system{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:-4;
+
+}
+
+/* =======================
+        AURORA
+======================= */
+
+.aurora{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    filter:blur(140px);
+
+    opacity:.18;
+
+    animation:floatAurora 18s ease-in-out infinite;
+
+}
+
+.aurora1{
+
+    width:700px;
+    height:700px;
+
+    background:#27E8D7;
+
+    left:-150px;
+    top:-100px;
+
+}
+
+.aurora2{
+
+    width:800px;
+    height:800px;
+
+    background:#2E90FF;
+
+    right:-250px;
+    top:100px;
+
+    animation-delay:6s;
+
+}
+
+.aurora3{
+
+    width:650px;
+    height:650px;
+
+    background:#27E890;
+
+    left:35%;
+    bottom:-220px;
+
+    animation-delay:12s;
+
+}
+
+/* =======================
+      NOISE
+======================= */
+
+.noise{
+
+    position:absolute;
+
+    inset:0;
+
+    opacity:.04;
+
+    background-image:
+    radial-gradient(circle,
+    white 1px,
+    transparent 1px);
+
+    background-size:28px 28px;
+
+}
+
+/* =======================
+      ANIMATION
+======================= */
+
+@keyframes floatAurora{
+
+    0%{
+
+        transform:
+        translate(0,0)
+        scale(1);
+
+    }
+
+    50%{
+
+        transform:
+        translate(80px,-60px)
+        scale(1.15);
+
+    }
+
+    100%{
+
+        transform:
+        translate(0,0)
+        scale(1);
+
+    }
+
+}

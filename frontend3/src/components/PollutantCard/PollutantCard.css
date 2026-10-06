@@ -1,0 +1,170 @@
+.pollutant-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  min-height: 190px;
+}
+
+.pollutant-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.pollutant-card__label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pollutant-card__label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.pollutant-card__unit-tag {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.pollutant-card__desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.pollutant-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.pollutant-card__status.is-safe {
+  background: rgba(46, 125, 50, 0.12);
+  color: var(--fresh-green);
+  border: 1px solid rgba(46, 125, 50, 0.25);
+}
+
+[data-theme='dark'] .pollutant-card__status.is-safe {
+  color: #57D97A;
+}
+
+.pollutant-card__status.is-over {
+  background: rgba(211, 47, 47, 0.12);
+  color: var(--danger);
+  border: 1px solid rgba(211, 47, 47, 0.28);
+}
+
+.pollutant-card__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.pollutant-card__status.is-safe .pollutant-card__dot {
+  background: #57D97A;
+}
+
+.pollutant-card__status.is-over .pollutant-card__dot {
+  background: var(--danger);
+  box-shadow: 0 0 6px rgba(211, 47, 47, 0.8);
+}
+
+.pollutant-card__middle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: var(--space-2) 0;
+}
+
+.pollutant-card__val-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.pollutant-card__value {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.pollutant-card__unit {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.pollutant-card__ratio-text {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+.pollutant-card__bar-wrap {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.pollutant-card__bar {
+  position: relative;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+  overflow: visible;
+  margin-bottom: 5px;
+}
+
+.pollutant-card__bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--radius-full);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+.pollutant-card__bar-fill.is-safe {
+  background: linear-gradient(90deg, var(--fresh-green) 0%, #57D97A 100%);
+}
+
+.pollutant-card__bar-fill.is-over {
+  background: linear-gradient(90deg, #FF8A3D 0%, var(--danger) 100%);
+}
+
+.pollutant-card__bar-mark {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  border-radius: 1px;
+  background: var(--text-primary);
+  opacity: 0.7;
+}
+
+.pollutant-card__bar-labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.pollutant-card__safe-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}

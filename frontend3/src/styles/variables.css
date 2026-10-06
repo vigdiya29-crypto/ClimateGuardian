@@ -1,0 +1,93 @@
+:root {
+  /* Brand palette */
+  --deep-green: #0B3D2E;
+  --deep-green-rgb: 11, 61, 46;
+  --fresh-green: #2E7D32;
+  --fresh-green-rgb: 46, 125, 50;
+  --sky: #00BCD4;
+  --sky-rgb: 0, 188, 212;
+  --warning: #FFC107;
+  --warning-rgb: 255, 193, 7;
+  --danger: #D32F2F;
+  --danger-rgb: 211, 47, 47;
+
+  /* Surfaces — light theme (default) */
+  --bg: #F4F8F6;
+  --bg-rgb: 244, 248, 246;
+  --surface: #FFFFFF;
+  --surface-rgb: 255, 255, 255;
+  --surface-elevated: #FFFFFF;
+  --border: rgba(11, 61, 46, 0.10);
+  --border-strong: rgba(11, 61, 46, 0.18);
+  --text-primary: #0E1F17;
+  --text-secondary: #4B5F58;
+  --text-muted: #7C8F88;
+  --shadow-color: 160, 30%, 15%;
+
+  /* Gradients */
+  --grad-primary: linear-gradient(135deg, var(--deep-green) 0%, var(--fresh-green) 100%);
+  --grad-sky: linear-gradient(135deg, var(--fresh-green) 0%, var(--sky) 100%);
+  --grad-warm: linear-gradient(135deg, var(--warning) 0%, #FF8A3D 100%);
+  --grad-danger: linear-gradient(135deg, var(--danger) 0%, #8E24AA 100%);
+
+  /* Typography */
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Radii & spacing */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-full: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-med: 320ms;
+  --dur-slow: 600ms;
+
+  --sidebar-w: 264px;
+  --sidebar-w-collapsed: 84px;
+  --navbar-h: 56px;
+}
+
+[data-theme='dark'] {
+  --bg: #101418;
+  --bg-rgb: 16, 20, 24;
+  --surface: #171D22;
+  --surface-rgb: 23, 29, 34;
+  --surface-elevated: #1D242A;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text-primary: #EAF3EF;
+  --text-secondary: #9FB3AC;
+  --text-muted: #6C7E78;
+  --shadow-color: 200, 40%, 2%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

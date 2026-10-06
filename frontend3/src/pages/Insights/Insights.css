@@ -1,0 +1,366 @@
+/* =========================================================================
+   Environmental Insights Page Stylesheet
+   ========================================================================= */
+
+.insights-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  animation: carbon-results-in 260ms var(--ease-out);
+}
+
+.insights__card {
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.insights__card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.insights__card-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.insights__badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insights__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--fresh-green);
+  background: rgba(var(--fresh-green-rgb), 0.08);
+  border: 1px solid rgba(var(--fresh-green-rgb), 0.22);
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+}
+
+.insights__card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2px 0 0;
+}
+
+.insights__card-desc {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* =========================================================================
+   AQI Categories Table Layout
+   ========================================================================= */
+
+.insights__table-wrapper {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.insights__table-head {
+  display: grid;
+  grid-template-columns: 110px 140px 1fr;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.insights__table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.insights__table-row {
+  display: grid;
+  grid-template-columns: 110px 140px 1fr;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.insights__table-row:last-child {
+  border-bottom: none;
+}
+
+.insights__table-row:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.insights__col-range {
+  display: flex;
+  align-items: center;
+}
+
+.insights__range-badge {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.insights__col-category {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insights__category-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.insights__category-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.insights__col-effect {
+  display: flex;
+  align-items: center;
+}
+
+.insights__effect-text {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* =========================================================================
+   3. Pollutants Section
+   ========================================================================= */
+
+.insights__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.insights__section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.insights__section-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 1px 0 0;
+}
+
+.insights__pollutants-count {
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.insights__pollutants-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.insights__pollutant-card {
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.insights__pollutant-card:hover {
+  border-color: rgba(var(--fresh-green-rgb), 0.35);
+}
+
+.insights__pollutant-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insights__pollutant-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  background: rgba(var(--fresh-green-rgb), 0.1);
+  color: var(--fresh-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.insights__pollutant-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.insights__pollutant-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* =========================================================================
+   4. Guidelines Dual Grid
+   ========================================================================= */
+
+.insights__guidelines-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.insights__guide-card {
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.insights__guide-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.insights__guide-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.insights__guide-icon-wrap--green {
+  background: rgba(var(--fresh-green-rgb), 0.12);
+  color: var(--fresh-green);
+}
+
+.insights__guide-icon-wrap--sky {
+  background: rgba(var(--sky-rgb), 0.12);
+  color: var(--sky);
+}
+
+.insights__guide-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2px 0 0;
+}
+
+.insights__checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.insights__checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.insights__check-icon {
+  color: var(--fresh-green);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.insights__check-icon--sky {
+  color: var(--sky);
+}
+
+.insights__checklist-item strong {
+  display: block;
+  font-size: 12px;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.insights__checklist-item p {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* =========================================================================
+   Responsive Overrides
+   ========================================================================= */
+
+@media (max-width: 900px) {
+  .insights__pollutants-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .insights__guidelines-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .insights__table-head {
+    display: none;
+  }
+  .insights__table-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 12px;
+  }
+  .insights__pollutants-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,337 @@
+/* =========================================================================
+   Settings Page Stylesheet
+   ========================================================================= */
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  animation: carbon-results-in 260ms var(--ease-out);
+}
+
+/* =========================================================================
+   Card Style
+   ========================================================================= */
+
+.settings__card {
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.settings__card-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings__card-head-icon {
+  color: var(--sky);
+}
+
+/* =========================================================================
+   Profile
+   ========================================================================= */
+
+.settings__profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) 0 var(--space-1);
+}
+
+.settings__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--grad-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.settings__profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings__profile-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.settings__profile-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.settings__edit-btn {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 6px 14px;
+}
+
+/* =========================================================================
+   Dual Grid
+   ========================================================================= */
+
+.settings__dual-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* =========================================================================
+   Option Row (Theme, Language, Notification Items)
+   ========================================================================= */
+
+.settings__option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+.settings__option-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.settings__option-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: rgba(var(--fresh-green-rgb), 0.1);
+  color: var(--fresh-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings__option-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings__option-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.settings__theme-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+/* =========================================================================
+   Toggle Switch
+   ========================================================================= */
+
+.settings__toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.04);
+  position: relative;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.settings__toggle:hover {
+  border-color: var(--text-muted);
+}
+
+.settings__toggle.is-on {
+  background: var(--fresh-green);
+  border-color: var(--fresh-green);
+}
+
+.settings__toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.settings__toggle.is-on .settings__toggle-knob {
+  transform: translateX(20px);
+}
+
+/* =========================================================================
+   Select Dropdown
+   ========================================================================= */
+
+.settings__select {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out);
+  appearance: auto;
+}
+
+.settings__select:hover {
+  border-color: var(--fresh-green);
+}
+
+.settings__select:focus {
+  outline: none;
+  border-color: var(--sky);
+}
+
+/* =========================================================================
+   Notification List
+   ========================================================================= */
+
+.settings__notif-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings__notif-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings__notif-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settings__notif-row:first-child {
+  padding-top: 0;
+}
+
+/* =========================================================================
+   Action Cards (Help & Logout)
+   ========================================================================= */
+
+.settings__action-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.settings__action-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.3);
+}
+
+.settings__action-card:hover:not(.settings__action-card--danger) {
+  border-color: rgba(var(--fresh-green-rgb), 0.4);
+}
+
+.settings__action-card--danger:hover {
+  border-color: rgba(var(--danger-rgb), 0.4);
+}
+
+.settings__action-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings__action-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings__action-icon--green {
+  background: rgba(var(--fresh-green-rgb), 0.12);
+  color: var(--fresh-green);
+}
+
+.settings__action-icon--danger {
+  background: rgba(var(--danger-rgb), 0.12);
+  color: var(--danger);
+}
+
+.settings__action-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.settings__action-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 1px 0 0;
+}
+
+.settings__action-arrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* =========================================================================
+   Responsive Overrides
+   ========================================================================= */
+
+@media (max-width: 768px) {
+  .settings__dual-grid {
+    grid-template-columns: 1fr;
+  }
+  .settings__profile {
+    flex-wrap: wrap;
+  }
+  .settings__edit-btn {
+    margin-left: 0;
+  }
+}

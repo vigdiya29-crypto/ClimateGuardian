@@ -1,0 +1,473 @@
+/* =========================================================================
+   Carbon Offset & Tree Impact Stylesheet
+   ========================================================================= */
+
+.offset-card {
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  animation: carbon-results-in 260ms var(--ease-out);
+}
+
+.offset-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.offset-card__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.offset-card__eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.offset-card__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--fresh-green);
+  background: rgba(var(--fresh-green-rgb), 0.08);
+  border: 1px solid rgba(var(--fresh-green-rgb), 0.22);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.offset-card__tag .live-dot {
+  width: 6px;
+  height: 6px;
+  background: #57d97a;
+  border-radius: 50%;
+}
+
+.offset-card__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2px 0 0;
+}
+
+.offset-card__subtitle {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Tree Type Selector Pills */
+.offset-card__type-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.offset-card__type-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.offset-card__type-btn:hover {
+  border-color: var(--fresh-green);
+  color: var(--text-primary);
+}
+
+.offset-card__type-btn.is-active {
+  background: rgba(var(--fresh-green-rgb), 0.16);
+  border-color: var(--fresh-green);
+  color: #57d97a;
+}
+
+.offset-card__type-rate {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.offset-card__type-btn.is-active .offset-card__type-rate {
+  color: #57d97a;
+}
+
+/* =========================================================================
+   1. MAIN RESULT HERO CARD
+   ========================================================================= */
+
+.offset-hero {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-5);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.offset-hero__block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.offset-hero__block--accent {
+  background: rgba(var(--fresh-green-rgb), 0.05);
+  border: 1px solid rgba(var(--fresh-green-rgb), 0.25);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+}
+
+.offset-hero__divider {
+  width: 1px;
+  height: 80%;
+  background: var(--border);
+}
+
+.offset-hero__label {
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.offset-hero__val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.offset-hero__number {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.offset-hero__number--green {
+  color: #57d97a;
+}
+
+.offset-hero__unit {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.offset-hero__hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin: 2px 0 0;
+}
+
+/* =========================================================================
+   2. THE VISUALIZATION GRAPH SECTION
+   ========================================================================= */
+
+.offset-chart-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.offset-chart-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.offset-chart-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 2px;
+}
+
+.offset-chart-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* View Mode Toggle */
+.offset-view-toggle {
+  display: inline-flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 2px;
+}
+
+.offset-view-btn {
+  border: none;
+  background: transparent;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.offset-view-btn.is-active {
+  background: rgba(var(--fresh-green-rgb), 0.2);
+  color: #57d97a;
+}
+
+/* Readout Status Bar */
+.offset-readout-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 11.5px;
+  flex-wrap: wrap;
+}
+
+.offset-readout-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.offset-readout-left strong {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.offset-readout-badge {
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #57d97a;
+  background: rgba(46, 125, 50, 0.16);
+  border: 1px solid rgba(46, 125, 50, 0.3);
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+}
+
+/* SVG Chart */
+.offset-svg-container {
+  width: 100%;
+  position: relative;
+}
+
+.offset-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  display: block;
+}
+
+.offset-axis-label {
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+  fill: var(--text-muted);
+}
+
+.offset-x-label {
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+  fill: var(--text-muted);
+  transition: fill var(--dur-fast) var(--ease-out);
+}
+
+.offset-x-label.is-active {
+  fill: #57d97a;
+  font-weight: 700;
+}
+
+.offset-data-dot {
+  transition: r var(--dur-fast) var(--ease-out), fill var(--dur-fast) var(--ease-out);
+}
+
+/* Chart Legend */
+.offset-chart-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.offset-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.offset-legend-line {
+  width: 16px;
+  height: 3px;
+  border-radius: var(--radius-full);
+}
+
+.offset-legend-line--green {
+  background: var(--fresh-green);
+}
+
+.offset-legend-line--yellow {
+  background: #ffc107;
+}
+
+/* 2 Core Takeaways Grid */
+.offset-takeaways-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: 4px;
+}
+
+.offset-takeaway-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.offset-takeaway-card--primary {
+  background: rgba(var(--fresh-green-rgb), 0.04);
+  border-color: rgba(var(--fresh-green-rgb), 0.25);
+}
+
+.offset-takeaway-icon {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.offset-takeaway-title {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  line-height: 1.35;
+  margin-bottom: 2px;
+}
+
+.offset-takeaway-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* =========================================================================
+   3. SCIENTIFIC ASSUMPTIONS (COLLAPSIBLE FOOTNOTE)
+   ========================================================================= */
+
+.offset-assumptions {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-2);
+}
+
+.offset-assumptions__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.offset-assumptions__toggle:hover {
+  color: var(--text-primary);
+}
+
+.offset-assumptions__toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.offset-assumptions__content {
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-top: 6px;
+  animation: carbon-results-in 200ms var(--ease-out);
+}
+
+.offset-assumptions__list {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.offset-assumptions__list strong {
+  color: var(--text-primary);
+}
+
+.text-green {
+  color: #57d97a !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Responsive Overrides */
+@media (max-width: 900px) {
+  .offset-hero {
+    grid-template-columns: 1fr;
+  }
+  .offset-hero__divider {
+    display: none;
+  }
+  .offset-takeaways-grid {
+    grid-template-columns: 1fr;
+  }
+}
