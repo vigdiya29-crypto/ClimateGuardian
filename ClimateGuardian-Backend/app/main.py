@@ -9,6 +9,12 @@ from app.config import get_settings
 from app.services.coordinates_service import load_city_coordinates
 from app.routes.aqi import router as aqi_router
 from app.routes.weather import router as weather_router
+from app.routes.carbon import router as carbon_router
+from app.routes.reports import router as reports_router
+from app.routes.alerts import router as alerts_router
+from app.routes.insights import router as insights_router
+from app.routes.auth import router as auth_router
+from app.routes.ai import router as ai_router
 
 logger = logging.getLogger("climateguardian")
 logging.basicConfig(level=logging.INFO)
@@ -69,6 +75,12 @@ app.add_middleware(
 # Register routes
 app.include_router(aqi_router)
 app.include_router(weather_router)
+app.include_router(carbon_router)
+app.include_router(reports_router)
+app.include_router(alerts_router)
+app.include_router(insights_router)
+app.include_router(auth_router)
+app.include_router(ai_router)
 
 
 @app.get("/")

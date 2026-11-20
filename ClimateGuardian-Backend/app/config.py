@@ -1,6 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -22,6 +22,14 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     HOST: str = "127.0.0.1"
     PORT: int = 8000
+
+    # Authentication security
+    JWT_SECRET: str = "climateguardian-super-secret-jwt-key-2026"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080  # 7 days
+
+    # AI / Gemini API configuration
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-1.5-flash"
 
     # CORS configuration - accepts comma-separated string or list
     ALLOWED_ORIGINS: Union[str, List[str]] = [

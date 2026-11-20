@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   AlertTriangle,
   CloudLightning,
@@ -14,22 +14,40 @@ import {
 import Card from '../../components/Card/Card';
 import CitySelector from '../../components/CitySelector/CitySelector';
 import { alerts, INDIAN_CITIES } from '../../data/placeholderData';
+import { getAlerts } from '../../services/api';
 import './Alerts.css';
 
 export default function Alerts() {
   const [city, setCity] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
+  const [alertsList, setAlertsList] = useState(alerts);
 
-  const filtered = alerts.filter((a) => {
-    const matchesCity = city === 'All' || a.city === city;
-    const matchesType = typeFilter === 'All' || a.type === typeFilter;
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchLiveAlerts() {
+      try {
+        const live = await getAlerts(city, typeFilter);
+        if (isMounted && Array.isArray(live)) {
+          setAlertsList(live);
+        }
+      } catch (err) {
+        console.warn('Alerts fetch error:', err);
+      }
+    }
+    fetchLiveAlerts();
+    return () => { isMounted = false; };
+  }, [city, typeFilter]);
+
+  const filtered = alertsList.filter((a) => {
+    const matchesCity = city === 'All' || a.city.toLowerCase() === city.toLowerCase();
+    const matchesType = typeFilter === 'All' || a.type.toLowerCase() === typeFilter.toLowerCase();
     return matchesCity && matchesType;
   });
 
-  const totalCount = alerts.length;
-  const criticalCount = alerts.filter((a) => a.severity === 'poor').length;
-  const weatherCount = alerts.filter((a) => a.type === 'weather').length;
-  const aqiCount = alerts.filter((a) => a.type === 'aqi').length;
+  const totalCount = alertsList.length;
+  const criticalCount = alertsList.filter((a) => a.severity === 'poor').length;
+  const weatherCount = alertsList.filter((a) => a.type === 'weather').length;
+  const aqiCount = alertsList.filter((a) => a.type === 'aqi').length;
 
   const getAlertIcon = (type, severity) => {
     if (type === 'weather') return <CloudLightning size={16} />;

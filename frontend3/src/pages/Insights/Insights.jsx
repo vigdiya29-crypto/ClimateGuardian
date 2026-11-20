@@ -1,9 +1,33 @@
+import { useState, useEffect } from 'react';
 import { ShieldCheck, BookOpen, Wind, Activity, CheckCircle2 } from 'lucide-react';
 import Card from '../../components/Card/Card';
 import { aqiCategories, pollutantInfo } from '../../data/placeholderData';
+import { getAqiCategories, getPollutantSpecs } from '../../services/api';
 import './Insights.css';
 
 export default function Insights() {
+  const [categories, setCategories] = useState(aqiCategories);
+  const [pollutants, setPollutants] = useState(pollutantInfo);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadStandards() {
+      try {
+        const [cats, pols] = await Promise.all([
+          getAqiCategories(),
+          getPollutantSpecs(),
+        ]);
+        if (isMounted) {
+          if (cats?.length) setCategories(cats);
+          if (pols?.length) setPollutants(pols);
+        }
+      } catch (err) {
+        console.warn('Insights live fetch notice:', err);
+      }
+    }
+    loadStandards();
+    return () => { isMounted = false; };
+  }, []);
   return (
     <div className="page-container insights-page">
       {/* 1. Environmental Insights Header */}
@@ -42,7 +66,7 @@ export default function Insights() {
           </div>
 
           <div className="insights__table-body">
-            {aqiCategories.map((c) => (
+            {categories.map((c) => (
               <div key={c.label} className="insights__table-row">
                 <div className="insights__col-range">
                   <span className="insights__range-badge">{c.range}</span>
@@ -76,7 +100,7 @@ export default function Insights() {
         </div>
 
         <div className="insights__pollutants-grid">
-          {pollutantInfo.map((p) => (
+          {pollutants.map((p) => (
             <Card key={p.key} className="insights__pollutant-card">
               <div className="insights__pollutant-top">
                 <div className="insights__pollutant-icon">

@@ -17,6 +17,11 @@ import Card from '../../components/Card/Card';
 import StatCard from '../../components/StatCard/StatCard';
 import { modelMetrics } from '../../data/placeholderData';
 import {
+  getModelMetrics,
+  getValidationData,
+  getFeatureImportance,
+} from '../../services/api';
+import {
   CARBON_STORAGE_KEY,
   calculateCarbonFootprint,
   initialForm,
@@ -31,6 +36,17 @@ import './Reports.css';
 
 export default function Reports() {
   const [showTechnicalNotes, setShowTechnicalNotes] = useState(false);
+  const [metrics, setMetrics] = useState(modelMetrics);
+  const [validationState, setValidationState] = useState({
+    data: null,
+    loading: true,
+    error: null,
+  });
+  const [featureState, setFeatureState] = useState({
+    data: null,
+    loading: true,
+    error: null,
+  });
   const [carbonData, setCarbonData] = useState(() => {
     try {
       const saved = localStorage.getItem(CARBON_STORAGE_KEY);
@@ -58,6 +74,58 @@ export default function Reports() {
     } catch (err) {
       console.warn('Could not read carbon result in reports', err);
     }
+
+    let isMounted = true;
+
+    async function loadReportsData() {
+      try {
+        const [liveMetrics, valData, featData] = await Promise.all([
+          getModelMetrics(),
+          getValidationData(),
+          getFeatureImportance(),
+        ]);
+
+        if (isMounted) {
+          if (liveMetrics) setMetrics(liveMetrics);
+
+          if (valData && Array.isArray(valData) && valData.length > 0) {
+            setValidationState({ data: valData, loading: false, error: null });
+          } else {
+            setValidationState({
+              data: null,
+              loading: false,
+              error: 'Validation dataset currently unavailable from backend service.',
+            });
+          }
+
+          if (featData && Array.isArray(featData) && featData.length > 0) {
+            setFeatureState({ data: featData, loading: false, error: null });
+          } else {
+            setFeatureState({
+              data: null,
+              loading: false,
+              error: 'Feature importance rankings currently unavailable from backend service.',
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Reports live fetch notice:', err);
+        if (isMounted) {
+          setValidationState({
+            data: null,
+            loading: false,
+            error: 'Failed to load validation dataset.',
+          });
+          setFeatureState({
+            data: null,
+            loading: false,
+            error: 'Failed to load feature importance rankings.',
+          });
+        }
+      }
+    }
+    loadReportsData();
+    return () => { isMounted = false; };
   }, []);
 
   const totalMonthly = Number(carbonData.total_emission || carbonData.totalKg || 0);
@@ -285,18 +353,26 @@ export default function Reports() {
 
       {/* Model Metrics Grid */}
       <div className="reports__kpi-grid">
-        <StatCard label="R² Score" value={modelMetrics.r2} accent="var(--fresh-green)" />
-        <StatCard label="Mean Absolute Error" value={modelMetrics.mae} unit="µg/m³" accent="var(--sky)" />
-        <StatCard label="Root Mean Sq. Error" value={modelMetrics.rmse} unit="µg/m³" accent="var(--warning)" />
-        <StatCard label="MAPE" value={`${modelMetrics.mape}%`} accent="var(--danger)" />
-        <StatCard label="Cross-Validation" value={modelMetrics.cvScore} accent="var(--fresh-green)" />
-        <StatCard label="Prediction Confidence" value={`${Math.round(modelMetrics.confidence * 100)}%`} accent="var(--sky)" />
+        <StatCard label="R² Score" value={metrics.r2} accent="var(--fresh-green)" />
+        <StatCard label="Mean Absolute Error" value={metrics.mae} unit="µg/m³" accent="var(--sky)" />
+        <StatCard label="Root Mean Sq. Error" value={metrics.rmse} unit="µg/m³" accent="var(--warning)" />
+        <StatCard label="MAPE" value={`${metrics.mape}%`} accent="var(--danger)" />
+        <StatCard label="Cross-Validation" value={metrics.cvScore} accent="var(--fresh-green)" />
+        <StatCard label="Prediction Confidence" value={`${Math.round(metrics.confidence * 100)}%`} accent="var(--sky)" />
       </div>
 
       {/* Real Charts Grid 1 */}
       <div className="reports__dual-grid">
-        <ActualVsPredictedChart />
-        <FeatureImportanceChart />
+        <ActualVsPredictedChart
+          data={validationState.data}
+          loading={validationState.loading}
+          error={validationState.error}
+        />
+        <FeatureImportanceChart
+          data={featureState.data}
+          loading={featureState.loading}
+          error={featureState.error}
+        />
       </div>
 
       {/* Real Charts Grid 2 */}

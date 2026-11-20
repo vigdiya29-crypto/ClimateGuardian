@@ -11,6 +11,7 @@ import PredictionHourlyChart from '../../components/Charts/PredictionHourlyChart
 import { Spinner } from '../../components/Loader/Loader';
 import { getAqiMeta } from '../../utils/aqiUtils';
 import { predictedAqi } from '../../data/placeholderData';
+import { predictAqi } from '../../services/api';
 import './Prediction.css';
 
 export default function Prediction() {
@@ -25,21 +26,27 @@ export default function Prediction() {
     time: predictedAqi.time,
   });
 
-  // API INTEGRATION: POST /api/predict { city, date, time, features... }
-  function handlePredict(e) {
+  // API INTEGRATION: calls GET /api/aqi/predict?city= via predictAqi(city)
+  async function handlePredict(e) {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const pred = await predictAqi(city);
+      setResult({
+        ...pred,
+        date,
+        time,
+      });
+    } catch {
       setResult({
         ...predictedAqi,
         city,
         date,
         time,
-        // slight realistic variance on prediction
-        aqi: city === 'Delhi' ? 182 : city === 'Mumbai' ? 145 : city === 'Bengaluru' ? 78 : 160,
       });
+    } finally {
       setLoading(false);
-    }, 700);
+    }
   }
 
   const meta = result ? getAqiMeta(result.aqi) : getAqiMeta(predictedAqi.aqi);

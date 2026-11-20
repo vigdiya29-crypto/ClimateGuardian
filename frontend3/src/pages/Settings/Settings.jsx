@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Moon,
   Sun,
@@ -17,21 +17,74 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/Card/Card';
+import { Spinner } from '../../components/Loader/Loader';
 import { useTheme } from '../../context/ThemeContext';
+import { getCurrentUser, logout } from '../../services/api';
 import './Settings.css';
 
 export default function Settings() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [language, setLanguage] = useState('English');
+  const [userProfile, setUserProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [profileError, setProfileError] = useState(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [notifications, setNotifications] = useState({
     aqiAlerts: true,
     weatherAlerts: true,
     weeklyReport: false,
   });
 
+  useEffect(() => {
+    let isMounted = true;
+    async function loadProfile() {
+      try {
+        const res = await getCurrentUser();
+        if (isMounted) {
+          if (res?.user) {
+            setUserProfile(res.user);
+          } else {
+            setProfileError('No profile details returned.');
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.warn('Settings profile fetch notice:', err.message);
+          setProfileError(err.message || 'Unable to load profile.');
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingProfile(false);
+        }
+      }
+    }
+    loadProfile();
+    return () => { isMounted = false; };
+  }, []);
+
+  function getInitials(name) {
+    if (!name) return 'CG';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
   function toggleNotif(key) {
     setNotifications((n) => ({ ...n, [key]: !n[key] }));
+  }
+
+  async function handleLogout() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await logout();
+    } catch (err) {
+      console.warn('Backend logout notification:', err.message);
+    } finally {
+      setIsLoggingOut(false);
+      navigate('/login');
+    }
   }
 
   return (
@@ -54,15 +107,39 @@ export default function Settings() {
           <span className="eyebrow">Profile</span>
         </div>
         <div className="settings__profile">
-          <span className="settings__avatar">AR</span>
+          <span className="settings__avatar">
+            {loadingProfile ? (
+              <Spinner size={16} />
+            ) : userProfile?.name ? (
+              getInitials(userProfile.name)
+            ) : (
+              'CG'
+            )}
+          </span>
           <div className="settings__profile-info">
-            <h4 className="settings__profile-name">Ayushmaan</h4>
+            <h4 className="settings__profile-name">
+              {loadingProfile
+                ? 'Loading profile…'
+                : userProfile?.name
+                ? userProfile.name
+                : 'Guest Citizen'}
+            </h4>
             <p className="settings__profile-meta">
-              <MapPin size={12} /> Jammu, India · Filmmaker
+              <MapPin size={12} />
+              {loadingProfile
+                ? ' Retrieving credentials…'
+                : userProfile?.email
+                ? ` ${userProfile.email} · ${userProfile.role || 'Member'}`
+                : ' Not signed in · Local session'}
             </p>
           </div>
-          <button className="btn btn-ghost btn-sm settings__edit-btn">
-            Edit Profile
+          <button
+            className="btn btn-ghost btn-sm settings__edit-btn"
+            onClick={() => {
+              if (!userProfile && !loadingProfile) navigate('/login');
+            }}
+          >
+            {userProfile ? 'Active Session' : 'Sign In'}
           </button>
         </div>
       </Card>
@@ -197,15 +274,18 @@ export default function Settings() {
 
         <Card
           className="settings__action-card settings__action-card--danger"
-          onClick={() => navigate('/login')}
+          onClick={handleLogout}
+          style={{ cursor: isLoggingOut ? 'not-allowed' : 'pointer', opacity: isLoggingOut ? 0.7 : 1 }}
         >
           <div className="settings__action-left">
             <div className="settings__action-icon settings__action-icon--danger">
-              <LogOut size={18} />
+              {isLoggingOut ? <Spinner size={18} /> : <LogOut size={18} />}
             </div>
             <div>
-              <h4 className="settings__action-title">Log Out</h4>
-              <p className="settings__action-desc">Sign out of your ClimateGuardian account.</p>
+              <h4 className="settings__action-title">{isLoggingOut ? 'Signing Out…' : 'Log Out'}</h4>
+              <p className="settings__action-desc">
+                {isLoggingOut ? 'Clearing credentials and redirecting…' : 'Sign out of your ClimateGuardian account.'}
+              </p>
             </div>
           </div>
           <ChevronRight size={16} className="settings__action-arrow" />

@@ -14,8 +14,16 @@ import {
   Loader2,
   ArrowRight,
   ArrowLeft,
+  AlertCircle,
 } from 'lucide-react';
 import AuthLayout from '../../layouts/AuthLayout';
+import {
+  login,
+  register,
+  requestForgotOtp,
+  verifyOtp,
+  resetPassword,
+} from '../../services/api';
 import './Login.css';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -218,6 +226,12 @@ export default function Login() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
+  const [signInError, setSignInError] = useState('');
+  const [signUpError, setSignUpError] = useState('');
+  const [forgotError, setForgotError] = useState('');
+  const [otpError, setOtpError] = useState('');
+  const [resetError, setResetError] = useState('');
+
   const signInValid = signInEmail.trim().length > 0 && signInPassword.length > 0;
   const signUpValid =
     name.trim().length > 0 &&
@@ -230,58 +244,91 @@ export default function Login() {
   const otpComplete = otp.every((digit) => digit !== '');
   const resetValid = newPassword.length >= 8 && confirmNewPassword.length > 0 && newPassword === confirmNewPassword;
 
-  function handleSignIn(e) {
+  async function handleSignIn(e) {
     e.preventDefault();
     if (!signInValid) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setSignInError('');
+    try {
+      await login(signInEmail, signInPassword);
       setSuccessFor('signin');
       setView('success');
       setTimeout(() => navigate('/dashboard'), 1100);
-    }, 700);
+    } catch (err) {
+      console.warn('Backend login notice:', err.message);
+      setSignInError(err.message || 'Invalid email or password. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleSignUp(e) {
+  async function handleSignUp(e) {
     e.preventDefault();
     if (!signUpValid) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setSignUpError('');
+    try {
+      await register(name, signUpEmail, signUpPassword);
       setSuccessFor('signup');
       setView('success');
       setTimeout(() => navigate('/dashboard'), 1300);
-    }, 800);
+    } catch (err) {
+      console.warn('Backend registration notice:', err.message);
+      setSignUpError(err.message || 'Registration failed. An account with this email may already exist.');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleForgotEmail(e) {
+  async function handleForgotEmail(e) {
     e.preventDefault();
     if (!forgotEmailReady) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setForgotError('');
+    try {
+      const res = await requestForgotOtp(forgotEmail);
+      if (res?.debug_otp) {
+        setOtp(res.debug_otp.split(''));
+      }
       setView('forgot-otp');
-    }, 600);
+    } catch (err) {
+      console.warn('Forgot password notice:', err.message);
+      setForgotError(err.message || 'Could not send recovery code. Please check the email.');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleVerifyOtp(e) {
+  async function handleVerifyOtp(e) {
     e.preventDefault();
     if (!otpComplete) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setOtpError('');
+    try {
+      await verifyOtp(forgotEmail, otp.join(''));
       setView('forgot-reset');
-    }, 600);
+    } catch (err) {
+      console.warn('OTP verification notice:', err.message);
+      setOtpError(err.message || 'Invalid or expired OTP code.');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleResetPassword(e) {
+  async function handleResetPassword(e) {
     e.preventDefault();
     if (!resetValid) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setResetError('');
+    try {
+      await resetPassword(forgotEmail, otp.join(''), newPassword);
       setView('forgot-success');
-    }, 600);
+    } catch (err) {
+      console.warn('Reset password notice:', err.message);
+      setResetError(err.message || 'Failed to reset password. OTP may be expired.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   const isAuthForm = view === 'signin' || view === 'signup';
@@ -423,10 +470,30 @@ export default function Login() {
                     />
                     Remember me
                   </label>
-                  <button type="button" className="login__forgot" onClick={() => setView('forgot-email')}>
+                  <button type="button" className="login__forgot" onClick={() => { setSignInError(''); setView('forgot-email'); }}>
                     Forgot password?
                   </button>
                 </div>
+                {signInError && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '9px 13px',
+                      marginBottom: 14,
+                      borderRadius: 10,
+                      background: 'rgba(239, 68, 68, 0.12)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#EF4444',
+                      fontSize: 12.5,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                    <span>{signInError}</span>
+                  </div>
+                )}
                 <button className="login__submit" type="submit" disabled={loading || !signInValid}>
                   {loading ? (
                     <>
@@ -513,6 +580,26 @@ export default function Login() {
                   <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
                   I agree to the <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>
                 </label>
+                {signUpError && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '9px 13px',
+                      marginBottom: 14,
+                      borderRadius: 10,
+                      background: 'rgba(239, 68, 68, 0.12)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#EF4444',
+                      fontSize: 12.5,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                    <span>{signUpError}</span>
+                  </div>
+                )}
                 <button className="login__submit" type="submit" disabled={loading || !signUpValid}>
                   {loading ? (
                     <>
@@ -565,6 +652,26 @@ export default function Login() {
                 <h2>Enter verification code</h2>
                 <p className="login__subtitle">We sent a 6-digit code to {forgotEmail || 'your email'}.</p>
                 <OtpInput value={otp} onChange={setOtp} />
+                {otpError && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '9px 13px',
+                      marginBottom: 14,
+                      borderRadius: 10,
+                      background: 'rgba(239, 68, 68, 0.12)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#EF4444',
+                      fontSize: 12.5,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                    <span>{otpError}</span>
+                  </div>
+                )}
                 <button className="login__submit" type="submit" disabled={loading || !otpComplete}>
                   {loading ? (
                     <>
@@ -631,6 +738,26 @@ export default function Login() {
                 />
                 {confirmNewPassword.length > 0 && confirmNewPassword !== newPassword && (
                   <span className="field__error">Passwords don't match</span>
+                )}
+                {resetError && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '9px 13px',
+                      marginBottom: 14,
+                      borderRadius: 10,
+                      background: 'rgba(239, 68, 68, 0.12)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#EF4444',
+                      fontSize: 12.5,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                    <span>{resetError}</span>
+                  </div>
                 )}
                 <button className="login__submit" type="submit" disabled={loading || !resetValid}>
                   {loading ? (

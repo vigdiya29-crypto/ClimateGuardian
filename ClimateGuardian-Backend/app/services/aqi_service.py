@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Dict, Any, Optional, Tuple, List
 import httpx
@@ -13,6 +14,80 @@ settings = get_settings()
 class UpstreamAPIError(Exception):
     """Raised when an external API (Open-Meteo) call fails or times out."""
     pass
+
+
+# HTTP status codes that indicate a transient server-side problem worth retrying.
+_RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+# Maximum number of attempts (1 original + 2 retries).
+_MAX_ATTEMPTS = 3
+# Base delay in seconds; doubles each attempt (1 s, 2 s).
+_BASE_BACKOFF_SECONDS = 1.0
+
+
+async def _http_get_with_retry(
+    client: httpx.AsyncClient,
+    url: str,
+    params: Dict[str, Any],
+    label: str,
+) -> httpx.Response:
+    """
+    Perform a GET request with bounded exponential-backoff retries for
+    transient HTTP errors (429, 500, 502, 503, 504) and timeout exceptions.
+
+    Args:
+        client:  An already-configured httpx.AsyncClient.
+        url:     Target URL.
+        params:  Query parameters dict.
+        label:   Human-readable label used only in log messages.
+
+    Returns:
+        The successful httpx.Response.
+
+    Raises:
+        UpstreamAPIError: After all attempts are exhausted, or immediately for
+                          non-retryable HTTP status codes.
+    """
+    last_exc: Optional[Exception] = None
+    delay = _BASE_BACKOFF_SECONDS
+
+    for attempt in range(1, _MAX_ATTEMPTS + 1):
+        try:
+            response = await client.get(url, params=params)
+
+            if response.status_code not in _RETRYABLE_STATUS_CODES:
+                # Either success (2xx) or a client error we should not retry.
+                response.raise_for_status()
+                return response
+
+            # Retryable HTTP error.
+            last_exc = httpx.HTTPStatusError(
+                f"HTTP {response.status_code}",
+                request=response.request,
+                response=response,
+            )
+            logger.warning(
+                f"{label}: attempt {attempt}/{_MAX_ATTEMPTS} got HTTP "
+                f"{response.status_code}; "
+                + (f"retrying in {delay:.0f}s…" if attempt < _MAX_ATTEMPTS else "giving up.")
+            )
+
+        except httpx.TimeoutException as exc:
+            last_exc = exc
+            logger.warning(
+                f"{label}: attempt {attempt}/{_MAX_ATTEMPTS} timed out; "
+                + (f"retrying in {delay:.0f}s…" if attempt < _MAX_ATTEMPTS else "giving up.")
+            )
+
+        if attempt < _MAX_ATTEMPTS:
+            await asyncio.sleep(delay)
+            delay *= 2  # exponential backoff
+
+    # All attempts failed.
+    if isinstance(last_exc, httpx.TimeoutException):
+        raise UpstreamAPIError(f"{label} timed out after {_MAX_ATTEMPTS} attempts.") from last_exc
+    raise UpstreamAPIError(
+        f"{label} returned a retryable error after {_MAX_ATTEMPTS} attempts."
+    ) from last_exc
 
 
 async def fetch_weather(
@@ -45,15 +120,15 @@ async def fetch_weather(
         should_close = True
 
     try:
-        response = await client.get(url, params=params)
-        response.raise_for_status()
+        response = await _http_get_with_retry(
+            client, url, params, label="Open-Meteo weather API"
+        )
         data = response.json()
         if "current" not in data:
             raise UpstreamAPIError("Open-Meteo forecast response missing 'current' payload.")
         return data["current"]
-    except httpx.TimeoutException as e:
-        logger.error(f"Timeout connecting to Open-Meteo weather API: {e}")
-        raise UpstreamAPIError(f"Weather service timed out: {e}") from e
+    except UpstreamAPIError:
+        raise
     except httpx.HTTPStatusError as e:
         logger.error(f"HTTP error from Open-Meteo weather API: {e.response.status_code}")
         raise UpstreamAPIError(f"Weather service returned HTTP {e.response.status_code}") from e
@@ -107,15 +182,15 @@ async def fetch_air_quality(
         should_close = True
 
     try:
-        response = await client.get(url, params=params)
-        response.raise_for_status()
+        response = await _http_get_with_retry(
+            client, url, params, label="Open-Meteo air-quality API"
+        )
         data = response.json()
         if "current" not in data or "hourly" not in data:
             raise UpstreamAPIError("Open-Meteo air-quality response missing 'current' or 'hourly' payload.")
         return data["current"], data["hourly"]
-    except httpx.TimeoutException as e:
-        logger.error(f"Timeout connecting to Open-Meteo air-quality API: {e}")
-        raise UpstreamAPIError(f"Air quality service timed out: {e}") from e
+    except UpstreamAPIError:
+        raise
     except httpx.HTTPStatusError as e:
         logger.error(f"HTTP error from Open-Meteo air-quality API: {e.response.status_code}")
         raise UpstreamAPIError(f"Air quality service returned HTTP {e.response.status_code}") from e

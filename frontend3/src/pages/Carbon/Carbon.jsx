@@ -21,6 +21,7 @@ import Card from '../../components/Card/Card';
 import CustomSelect from '../../components/CustomSelect/CustomSelect';
 import { Spinner } from '../../components/Loader/Loader';
 import CarbonOffsetVisualizer from './CarbonOffsetVisualizer';
+import { calculateCarbonFootprint as calculateCarbonApi } from '../../services/api';
 import './Carbon.css';
 
 export const CARBON_STORAGE_KEY = 'climateguardian_carbon_result';
@@ -323,14 +324,13 @@ export default function Carbon() {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
-  function handleCalculate(e) {
+  async function handleCalculate(e) {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      const calculated = calculateCarbonFootprint(form);
+    try {
+      const calculated = await calculateCarbonApi(form);
       setResult(calculated);
-
       try {
         localStorage.setItem(
           CARBON_STORAGE_KEY,
@@ -343,9 +343,24 @@ export default function Carbon() {
       } catch (err) {
         console.warn('Failed to persist carbon result', err);
       }
-
+    } catch {
+      const calculated = calculateCarbonFootprint(form);
+      setResult(calculated);
+      try {
+        localStorage.setItem(
+          CARBON_STORAGE_KEY,
+          JSON.stringify({
+            ...calculated,
+            form,
+            calculatedAt: new Date().toISOString(),
+          })
+        );
+      } catch (err) {
+        console.warn('Failed to persist carbon result', err);
+      }
+    } finally {
       setLoading(false);
-    }, 450);
+    }
   }
 
   const breakdownData = result?.breakdown || [];

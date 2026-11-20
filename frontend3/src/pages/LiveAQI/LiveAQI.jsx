@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Thermometer, Droplets, Gauge, Wind, CloudRain,
   HeartPulse, Radio, CheckCircle2, Activity
@@ -10,11 +10,47 @@ import AQITrendChart from '../../components/Charts/AQITrendChart';
 import CitySelector from '../../components/CitySelector/CitySelector';
 import { getAqiMeta } from '../../utils/aqiUtils';
 import { currentAqi, livePollutants, weatherNow } from '../../data/placeholderData';
+import { getLiveAqi, getCurrentWeather } from '../../services/api';
 import './LiveAQI.css';
 
 export default function LiveAQI() {
   const [city, setCity] = useState(currentAqi.city);
-  const meta = getAqiMeta(currentAqi.aqi);
+  const [aqiInfo, setAqiInfo] = useState(currentAqi);
+  const [weatherInfo, setWeatherInfo] = useState(weatherNow);
+  const [pollutantsList, setPollutantsList] = useState(livePollutants);
+  const meta = getAqiMeta(aqiInfo.aqi);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadLiveData() {
+      try {
+        const [live, weather] = await Promise.all([
+          getLiveAqi(city),
+          getCurrentWeather(city),
+        ]);
+        if (isMounted) {
+          if (live) setAqiInfo((prev) => ({ ...prev, ...live }));
+          if (weather) setWeatherInfo((prev) => ({ ...prev, ...weather }));
+          if (live?.pollutants) {
+            setPollutantsList([
+              { key: 'pm25', label: 'PM2.5', unit: 'µg/m³', value: live.pollutants.pm2_5 ?? 96, safe: 60 },
+              { key: 'pm10', label: 'PM10', unit: 'µg/m³', value: live.pollutants.pm10 ?? 142, safe: 100 },
+              { key: 'co', label: 'CO', unit: 'mg/m³', value: Number(((live.pollutants.carbon_monoxide ?? 1200) / 1000).toFixed(1)), safe: 4 },
+              { key: 'no2', label: 'NO₂', unit: 'µg/m³', value: live.pollutants.nitrogen_dioxide ?? 48, safe: 80 },
+              { key: 'so2', label: 'SO₂', unit: 'µg/m³', value: live.pollutants.sulphur_dioxide ?? 18, safe: 80 },
+              { key: 'ozone', label: 'Ozone', unit: 'µg/m³', value: live.pollutants.ozone ?? 62, safe: 100 },
+            ]);
+          }
+        }
+      } catch (err) {
+        console.warn('Using fallback telemetry:', err);
+      }
+    }
+
+    loadLiveData();
+    return () => { isMounted = false; };
+  }, [city]);
 
   return (
     <div className="page-container live-aqi-page">
@@ -42,7 +78,7 @@ export default function LiveAQI() {
         <div className="live-aqi__hero-grid">
           {/* Left: Gauge Focus */}
           <div className="live-aqi__hero-gauge-pane">
-            <AQIGauge value={currentAqi.aqi} size={155} />
+            <AQIGauge value={aqiInfo.aqi} size={155} />
           </div>
 
           {/* Right: Station Telemetry & Context */}
@@ -67,7 +103,7 @@ export default function LiveAQI() {
                 {meta.label} Air Quality
               </span>
               <span className="live-aqi__pill">
-                Primary Factor: <strong>{currentAqi.mainPollutant}</strong> (96 µg/m³)
+                Primary Factor: <strong>{aqiInfo.mainPollutant}</strong> (96 µg/m³)
               </span>
               <span className="live-aqi__pill">
                 AQI Contribution: <strong>58%</strong>
@@ -80,7 +116,7 @@ export default function LiveAQI() {
 
             <div className="live-aqi__hero-stats-bar">
               <span className="live-aqi__stat-item">
-                <strong>Updated:</strong> {new Date(currentAqi.updatedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} IST
+                <strong>Updated:</strong> {new Date(aqiInfo.updatedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} IST
               </span>
               <span className="live-aqi__stat-divider" />
               <span className="live-aqi__stat-item">
@@ -142,7 +178,7 @@ export default function LiveAQI() {
           <span className="live-aqi__standards-tag">CPCB Standard (NAAQS 2026)</span>
         </div>
         <div className="grid grid-3">
-          {livePollutants.map((p) => (
+          {pollutantsList.map((p) => (
             <PollutantCard key={p.key} label={p.label} value={p.value} unit={p.unit} safe={p.safe} />
           ))}
         </div>
@@ -164,10 +200,10 @@ export default function LiveAQI() {
               <span className="live-aqi__weather-tag">Feels 36°C</span>
             </div>
             <div className="live-aqi__weather-value-wrap">
-              <span className="live-aqi__weather-value">{weatherNow.temperatureC}°C</span>
+              <span className="live-aqi__weather-value">{weatherInfo.temperatureC}°C</span>
               <span className="live-aqi__weather-label">Ambient Temperature</span>
             </div>
-            <span className="live-aqi__weather-sub">{weatherNow.condition}</span>
+            <span className="live-aqi__weather-sub">{weatherInfo.condition}</span>
           </Card>
 
           <Card className="live-aqi__weather-card">
@@ -176,7 +212,7 @@ export default function LiveAQI() {
               <span className="live-aqi__weather-tag">Moderate</span>
             </div>
             <div className="live-aqi__weather-value-wrap">
-              <span className="live-aqi__weather-value">{weatherNow.humidity}%</span>
+              <span className="live-aqi__weather-value">{weatherInfo.humidity}%</span>
               <span className="live-aqi__weather-label">Relative Humidity</span>
             </div>
             <span className="live-aqi__weather-sub">Dew Point 24°C</span>
@@ -188,7 +224,7 @@ export default function LiveAQI() {
               <span className="live-aqi__weather-tag">Stable</span>
             </div>
             <div className="live-aqi__weather-value-wrap">
-              <span className="live-aqi__weather-value">{weatherNow.pressureHpa}</span>
+              <span className="live-aqi__weather-value">{weatherInfo.pressureHpa}</span>
               <span className="live-aqi__weather-label">Atmospheric Pressure</span>
             </div>
             <span className="live-aqi__weather-sub">hPa (Sea Level)</span>
@@ -200,7 +236,7 @@ export default function LiveAQI() {
               <span className="live-aqi__weather-tag">SE Breeze</span>
             </div>
             <div className="live-aqi__weather-value-wrap">
-              <span className="live-aqi__weather-value">{weatherNow.windSpeedKmh}</span>
+              <span className="live-aqi__weather-value">{weatherInfo.windSpeedKmh}</span>
               <span className="live-aqi__weather-label">Wind Velocity</span>
             </div>
             <span className="live-aqi__weather-sub">km/h from South-East</span>
@@ -212,7 +248,7 @@ export default function LiveAQI() {
               <span className="live-aqi__weather-tag">Scattered</span>
             </div>
             <div className="live-aqi__weather-value-wrap">
-              <span className="live-aqi__weather-value">{weatherNow.rainMm} mm</span>
+              <span className="live-aqi__weather-value">{weatherInfo.rainMm} mm</span>
               <span className="live-aqi__weather-label">24h Rainfall</span>
             </div>
             <span className="live-aqi__weather-sub">Light Precipitation</span>

@@ -1,29 +1,20 @@
 import { useState } from 'react';
 import Card from '../../components/Card/Card';
+import { Spinner } from '../../components/Loader/Loader';
 import './ReportCharts.css';
 
 // ---------------------------------------------------------------------------
 // 1. Actual vs Predicted AQI Validation Chart
 // ---------------------------------------------------------------------------
-const VALIDATION_DATA = [
-  { day: 'Day 1', actual: 152, predicted: 150 },
-  { day: 'Day 2', actual: 168, predicted: 164 },
-  { day: 'Day 3', actual: 175, predicted: 171 },
-  { day: 'Day 4', actual: 142, predicted: 146 },
-  { day: 'Day 5', actual: 180, predicted: 176 },
-  { day: 'Day 6', actual: 165, predicted: 162 },
-  { day: 'Day 7', actual: 158, predicted: 160 },
-  { day: 'Day 8', actual: 172, predicted: 169 },
-  { day: 'Day 9', actual: 185, predicted: 181 },
-  { day: 'Day 10', actual: 160, predicted: 158 },
-  { day: 'Day 11', actual: 168, predicted: 165 },
-  { day: 'Day 12', actual: 174, predicted: 170 },
-  { day: 'Day 13', actual: 155, predicted: 157 },
-  { day: 'Day 14', actual: 168, predicted: 166 },
-];
+export function ActualVsPredictedChart({ data = null, loading = false, error = null }) {
+  const chartData = Array.isArray(data) && data.length > 0 ? data : null;
+  const [hoveredIdx, setHoveredIdx] = useState(null);
 
-export function ActualVsPredictedChart() {
-  const [hoveredIdx, setHoveredIdx] = useState(VALIDATION_DATA.length - 1);
+  const activeIdx = chartData
+    ? (hoveredIdx != null && hoveredIdx >= 0 && hoveredIdx < chartData.length ? hoveredIdx : chartData.length - 1)
+    : 0;
+  const activeItem = chartData ? chartData[activeIdx] : null;
+  const delta = activeItem ? Math.abs(Number(activeItem.actual || 0) - Number(activeItem.predicted || 0)) : 0;
 
   const width = 500;
   const height = 190;
@@ -34,28 +25,46 @@ export function ActualVsPredictedChart() {
 
   const chartW = width - padLeft - padRight;
   const chartH = height - padTop - padBottom;
-  const minVal = 130;
-  const maxVal = 200;
 
-  const getX = (idx) => padLeft + (idx / (VALIDATION_DATA.length - 1)) * chartW;
-  const getY = (val) => padTop + chartH - ((val - minVal) / (maxVal - minVal)) * chartH;
+  let actualPoints = [];
+  let predPoints = [];
+  let actualPathD = '';
+  let predPathD = '';
+  let yGridVals = [140, 160, 180, 200];
+  let getY = () => 0;
 
-  const actualPoints = VALIDATION_DATA.map((d, i) => ({ x: getX(i), y: getY(d.actual), ...d }));
-  const predPoints = VALIDATION_DATA.map((d, i) => ({ x: getX(i), y: getY(d.predicted), ...d }));
+  if (chartData) {
+    const allValues = chartData.flatMap((d) => [Number(d.actual) || 0, Number(d.predicted) || 0]);
+    const rawMin = Math.min(...allValues);
+    const rawMax = Math.max(...allValues);
+    const minVal = Math.max(0, Math.floor(rawMin / 10) * 10 - 10);
+    const maxVal = Math.ceil(rawMax / 10) * 10 + 10;
+    const range = maxVal - minVal || 1;
 
-  const makePath = (pts) =>
-    pts.reduce((acc, curr, i, arr) => {
-      if (i === 0) return `M ${curr.x},${curr.y}`;
-      const prev = arr[i - 1];
-      const cpX = (prev.x + curr.x) / 2;
-      return `${acc} C ${cpX},${prev.y} ${cpX},${curr.y} ${curr.x},${curr.y}`;
-    }, '');
+    const getX = (idx) => padLeft + (idx / Math.max(1, chartData.length - 1)) * chartW;
+    getY = (val) => padTop + chartH - ((val - minVal) / range) * chartH;
 
-  const actualPathD = makePath(actualPoints);
-  const predPathD = makePath(predPoints);
+    actualPoints = chartData.map((d, i) => ({ x: getX(i), y: getY(Number(d.actual) || 0), ...d }));
+    predPoints = chartData.map((d, i) => ({ x: getX(i), y: getY(Number(d.predicted) || 0), ...d }));
 
-  const activeItem = VALIDATION_DATA[hoveredIdx] || VALIDATION_DATA[VALIDATION_DATA.length - 1];
-  const delta = Math.abs(activeItem.actual - activeItem.predicted);
+    const makePath = (pts) =>
+      pts.reduce((acc, curr, i, arr) => {
+        if (i === 0) return `M ${curr.x},${curr.y}`;
+        const prev = arr[i - 1];
+        const cpX = (prev.x + curr.x) / 2;
+        return `${acc} C ${cpX},${prev.y} ${cpX},${curr.y} ${curr.x},${curr.y}`;
+      }, '');
+
+    actualPathD = makePath(actualPoints);
+    predPathD = makePath(predPoints);
+
+    yGridVals = [
+      Math.round(minVal + range * 0.25),
+      Math.round(minVal + range * 0.5),
+      Math.round(minVal + range * 0.75),
+      maxVal,
+    ];
+  }
 
   return (
     <Card className="report-chart-card">
@@ -66,115 +75,153 @@ export function ActualVsPredictedChart() {
             14-day holdout validation set · R² = 0.94
           </p>
         </div>
-        <div className="report-chart-card__readout">
-          <span className="report-chart-card__readout-label">{activeItem.day}:</span>
-          <strong>Actual {activeItem.actual}</strong> vs <strong>Pred {activeItem.predicted}</strong>
-          <span className="report-chart-card__delta">(&Delta; {delta} pts)</span>
-        </div>
+        {activeItem && (
+          <div className="report-chart-card__readout">
+            <span className="report-chart-card__readout-label">{activeItem.day}:</span>
+            <strong>Actual {activeItem.actual}</strong> vs <strong>Pred {activeItem.predicted}</strong>
+            <span className="report-chart-card__delta">(&Delta; {delta} pts)</span>
+          </div>
+        )}
       </div>
 
-      <div className="report-chart-card__body">
-        <svg
-          viewBox={`0 0 ${width} ${height}`}
-          className="report-chart-svg"
-          onMouseLeave={() => setHoveredIdx(VALIDATION_DATA.length - 1)}
+      {loading ? (
+        <div
+          className="report-chart-card__body"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: 180,
+            gap: 10,
+            color: 'var(--text-muted)',
+            fontSize: 13,
+          }}
         >
-          {/* Y Axis Grid Lines */}
-          {[140, 160, 180, 200].map((val) => {
-            const y = getY(val);
-            return (
-              <g key={val} className="report-chart__grid-row">
-                <line
-                  x1={padLeft}
-                  y1={y}
-                  x2={width - padRight}
-                  y2={y}
-                  stroke="var(--border)"
-                  strokeDasharray="2 3"
-                  strokeWidth="1"
-                />
-                <text x={padLeft - 6} y={y + 3.5} textAnchor="end" className="report-chart__axis-label">
-                  {val}
-                </text>
-              </g>
-            );
-          })}
+          <Spinner size={20} />
+          <span>Loading validation series...</span>
+        </div>
+      ) : error || !chartData ? (
+        <div
+          className="report-chart-card__body"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: 180,
+            color: 'var(--text-muted)',
+            fontSize: 13,
+            textAlign: 'center',
+            padding: '0 var(--space-4)',
+          }}
+        >
+          <p>{error || 'Validation telemetry currently unavailable from backend.'}</p>
+        </div>
+      ) : (
+        <>
+          <div className="report-chart-card__body">
+            <svg
+              viewBox={`0 0 ${width} ${height}`}
+              className="report-chart-svg"
+              onMouseLeave={() => setHoveredIdx(null)}
+            >
+              {/* Y Axis Grid Lines */}
+              {yGridVals.map((val) => {
+                const y = getY(val);
+                return (
+                  <g key={val} className="report-chart__grid-row">
+                    <line
+                      x1={padLeft}
+                      y1={y}
+                      x2={width - padRight}
+                      y2={y}
+                      stroke="var(--border)"
+                      strokeDasharray="2 3"
+                      strokeWidth="1"
+                    />
+                    <text x={padLeft - 6} y={y + 3.5} textAnchor="end" className="report-chart__axis-label">
+                      {val}
+                    </text>
+                  </g>
+                );
+              })}
 
-          {/* Actual Line (Sky) */}
-          <path d={actualPathD} fill="none" stroke="var(--sky)" strokeWidth="2.2" strokeLinecap="round" />
+              {/* Actual Line (Sky) */}
+              <path d={actualPathD} fill="none" stroke="var(--sky)" strokeWidth="2.2" strokeLinecap="round" />
 
-          {/* Predicted Line (Fresh Green) */}
-          <path
-            d={predPathD}
-            fill="none"
-            stroke="var(--fresh-green)"
-            strokeWidth="2.2"
-            strokeDasharray="4 2"
-            strokeLinecap="round"
-          />
+              {/* Predicted Line (Fresh Green) */}
+              <path
+                d={predPathD}
+                fill="none"
+                stroke="var(--fresh-green)"
+                strokeWidth="2.2"
+                strokeDasharray="4 2"
+                strokeLinecap="round"
+              />
 
-          {/* Interactive Trigger Points */}
-          {actualPoints.map((pt, i) => {
-            const isHovered = i === hoveredIdx;
-            return (
-              <g key={i}>
-                <circle
-                  cx={pt.x}
-                  cy={pt.y}
-                  r={isHovered ? 4.5 : 2.5}
-                  fill="var(--sky)"
-                  stroke="var(--surface)"
-                  strokeWidth="1.5"
-                />
-                <circle
-                  cx={predPoints[i].x}
-                  cy={predPoints[i].y}
-                  r={isHovered ? 4.5 : 2.5}
-                  fill="var(--fresh-green)"
-                  stroke="var(--surface)"
-                  strokeWidth="1.5"
-                />
-                <rect
-                  x={pt.x - chartW / VALIDATION_DATA.length / 2}
-                  y={padTop}
-                  width={chartW / VALIDATION_DATA.length}
-                  height={chartH + padBottom}
-                  fill="transparent"
-                  onMouseEnter={() => setHoveredIdx(i)}
-                  style={{ cursor: 'pointer' }}
-                />
-              </g>
-            );
-          })}
+              {/* Interactive Trigger Points */}
+              {actualPoints.map((pt, i) => {
+                const isHovered = i === activeIdx;
+                return (
+                  <g key={i}>
+                    <circle
+                      cx={pt.x}
+                      cy={pt.y}
+                      r={isHovered ? 4.5 : 2.5}
+                      fill="var(--sky)"
+                      stroke="var(--surface)"
+                      strokeWidth="1.5"
+                    />
+                    <circle
+                      cx={predPoints[i].x}
+                      cy={predPoints[i].y}
+                      r={isHovered ? 4.5 : 2.5}
+                      fill="var(--fresh-green)"
+                      stroke="var(--surface)"
+                      strokeWidth="1.5"
+                    />
+                    <rect
+                      x={pt.x - chartW / chartData.length / 2}
+                      y={padTop}
+                      width={chartW / chartData.length}
+                      height={chartH + padBottom}
+                      fill="transparent"
+                      onMouseEnter={() => setHoveredIdx(i)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </g>
+                );
+              })}
 
-          {/* X Axis Labels */}
-          {actualPoints.map((pt, i) => {
-            if (i === 0 || i === 4 || i === 8 || i === 13) {
-              return (
-                <text
-                  key={i}
-                  x={pt.x}
-                  y={padTop + chartH + 16}
-                  textAnchor="middle"
-                  className="report-chart__axis-label"
-                >
-                  {pt.day}
-                </text>
-              );
-            }
-            return null;
-          })}
-        </svg>
-      </div>
+              {/* X Axis Labels */}
+              {actualPoints.map((pt, i) => {
+                if (i === 0 || i === 4 || i === 8 || i === chartData.length - 1) {
+                  return (
+                    <text
+                      key={i}
+                      x={pt.x}
+                      y={padTop + chartH + 16}
+                      textAnchor="middle"
+                      className="report-chart__axis-label"
+                    >
+                      {pt.day}
+                    </text>
+                  );
+                }
+                return null;
+              })}
+            </svg>
+          </div>
 
-      <div className="report-chart-card__legend">
-        <span className="report-chart-legend-item">
-          <span className="report-chart-dot" style={{ backgroundColor: 'var(--sky)' }} /> Actual AQI
-        </span>
-        <span className="report-chart-legend-item">
-          <span className="report-chart-dot" style={{ backgroundColor: 'var(--fresh-green)' }} /> XGBoost Forecast
-        </span>
-      </div>
+          <div className="report-chart-card__legend">
+            <span className="report-chart-legend-item">
+              <span className="report-chart-dot" style={{ backgroundColor: 'var(--sky)' }} /> Actual AQI
+            </span>
+            <span className="report-chart-legend-item">
+              <span className="report-chart-dot" style={{ backgroundColor: 'var(--fresh-green)' }} /> XGBoost Forecast
+            </span>
+          </div>
+        </>
+      )}
     </Card>
   );
 }
@@ -182,16 +229,9 @@ export function ActualVsPredictedChart() {
 // ---------------------------------------------------------------------------
 // 2. Feature Importance Ranking (XGBoost Gain-Based Ranking)
 // ---------------------------------------------------------------------------
-const FEATURE_IMPORTANCE = [
-  { name: 'PM2.5 Concentration', gain: 38, category: 'Particulate' },
-  { name: 'PM10 Particulate', gain: 24, category: 'Particulate' },
-  { name: 'Wind Speed & Dispersion', gain: 15, category: 'Meteorology' },
-  { name: 'Relative Humidity', gain: 11, category: 'Meteorology' },
-  { name: 'Ambient Temperature', gain: 7, category: 'Meteorology' },
-  { name: 'NO₂ Vehicle Emissions', gain: 5, category: 'Combustion' },
-];
+export function FeatureImportanceChart({ data = null, loading = false, error = null }) {
+  const featuresList = Array.isArray(data) && data.length > 0 ? data : null;
 
-export function FeatureImportanceChart() {
   return (
     <Card className="report-chart-card">
       <div className="report-chart-card__head">
@@ -203,28 +243,62 @@ export function FeatureImportanceChart() {
         </div>
       </div>
 
-      <div className="report-features-list">
-        {FEATURE_IMPORTANCE.map((item, i) => (
-          <div key={i} className="report-feature-row">
-            <div className="report-feature-info">
-              <span className="report-feature-name">{item.name}</span>
-              <span className="report-feature-tag">{item.category}</span>
-            </div>
-            <div className="report-feature-bar-wrap">
-              <div className="report-feature-track">
-                <div
-                  className="report-feature-fill"
-                  style={{
-                    width: `${item.gain}%`,
-                    background: i === 0 ? 'var(--fresh-green)' : i === 1 ? '#57D97A' : 'var(--sky)',
-                  }}
-                />
+      {loading ? (
+        <div
+          className="report-chart-card__body"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: 180,
+            gap: 10,
+            color: 'var(--text-muted)',
+            fontSize: 13,
+          }}
+        >
+          <Spinner size={20} />
+          <span>Loading feature rankings...</span>
+        </div>
+      ) : error || !featuresList ? (
+        <div
+          className="report-chart-card__body"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: 180,
+            color: 'var(--text-muted)',
+            fontSize: 13,
+            textAlign: 'center',
+            padding: '0 var(--space-4)',
+          }}
+        >
+          <p>{error || 'Feature rankings unavailable from backend.'}</p>
+        </div>
+      ) : (
+        <div className="report-features-list">
+          {featuresList.map((item, i) => (
+            <div key={item.name || i} className="report-feature-row">
+              <div className="report-feature-info">
+                <span className="report-feature-name">{item.name}</span>
+                <span className="report-feature-tag">{item.category}</span>
               </div>
-              <span className="report-feature-val">{item.gain}%</span>
+              <div className="report-feature-bar-wrap">
+                <div className="report-feature-track">
+                  <div
+                    className="report-feature-fill"
+                    style={{
+                      width: `${Math.min(100, Math.max(0, item.gain))}%`,
+                      background: i === 0 ? 'var(--fresh-green)' : i === 1 ? '#57D97A' : 'var(--sky)',
+                    }}
+                  />
+                </div>
+                <span className="report-feature-val">{item.gain}%</span>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }
